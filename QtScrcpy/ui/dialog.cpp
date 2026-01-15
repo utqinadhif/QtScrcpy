@@ -77,6 +77,7 @@ Dialog::Dialog(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
                     ui->connectedPhoneList->addItem(Config::getInstance().getNickName(item) + "-" + item);
                 }
 
+                // add auto start for all devices by utqinadhif
                 for (int i = 0; i < ui->serialBox->count(); ++i) {
                     QString serial = ui->serialBox->itemText(i).trimmed();
                     if (!serial.isEmpty()) {
