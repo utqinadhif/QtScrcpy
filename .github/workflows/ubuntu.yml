@@ -47,7 +47,7 @@ jobs:
           apt-get update
           apt-get install -y \
             git ca-certificates sudo \
-            build-essential cmake \
+            build-essential \
             libglew-dev libglfw3-dev \
             libxcb1-dev libxkbcommon-dev libxkbcommon-x11-dev \
             libx11-dev libx11-xcb-dev \
@@ -57,6 +57,11 @@ jobs:
             python3 python3-pip \
             fuse libasound2-dev \
             gnupg lsb-release
+          
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          apt-get update
+          apt-get install -y cmake
 
       - name: Setup FUSE
         run: |

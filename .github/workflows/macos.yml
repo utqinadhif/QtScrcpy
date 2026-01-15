@@ -4,10 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-    paths:
-      - 'QtScrcpy/**'
-      - '!QtScrcpy/res/**'
-      - '.github/workflows/macos.yml'
   pull_request:
     paths:
       - 'QtScrcpy/**'
