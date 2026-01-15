@@ -78,13 +78,13 @@ Dialog::Dialog(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
                 }
 
                 // try add auto start for all devices
-                for (int i = 0; i < ui->serialBox->count(); ++i) {
-                    QString serial = ui->serialBox->itemText(i).trimmed();
-                    if (!serial.isEmpty()) {
-                        ui->serialBox->setCurrentIndex(i);
-                        on_startServerBtn_clicked();
-                    }
-                }
+                // for (int i = 0; i < ui->serialBox->count(); ++i) {
+                //     QString serial = ui->serialBox->itemText(i).trimmed();
+                //     if (!serial.isEmpty()) {
+                //         ui->serialBox->setCurrentIndex(i);
+                //         on_startServerBtn_clicked();
+                //     }
+                // }
             } else if (args.contains("show") && args.contains("wlan0")) {
                 QString ip = m_adb.getDeviceIPFromStdOut();
                 if (ip.isEmpty()) {
@@ -613,6 +613,25 @@ void Dialog::on_clearOut_clicked()
 void Dialog::on_stopAllServerBtn_clicked()
 {
     qsc::IDeviceManage::getInstance().disconnectAllDevice();
+}
+
+void Dialog::on_openAllDeviceBtn_clicked()
+{
+    if (ui->serialBox->count() == 0) {
+        outLog("No devices connected", true);
+        return;
+    }
+
+    outLog("Opening all devices...", true);
+
+    for (int i = 0; i < ui->serialBox->count(); ++i) {
+        QString serial = ui->serialBox->itemText(i).trimmed();
+        if (!serial.isEmpty()) {
+            ui->serialBox->setCurrentIndex(i);
+            on_startServerBtn_clicked();
+            delayMs(500);
+        }
+    }
 }
 
 void Dialog::on_refreshGameScriptBtn_clicked()

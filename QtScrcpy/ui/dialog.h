@@ -49,6 +49,7 @@ private slots:
     void on_stopAdbBtn_clicked();
     void on_clearOut_clicked();
     void on_stopAllServerBtn_clicked();
+    void on_openAllDeviceBtn_clicked();
     void on_refreshGameScriptBtn_clicked();
     void on_applyScriptBtn_clicked();
     void on_recordScreenCheck_clicked(bool checked);
