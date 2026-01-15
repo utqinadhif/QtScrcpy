@@ -76,6 +76,14 @@ Dialog::Dialog(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
                     ui->serialBox->addItem(item);
                     ui->connectedPhoneList->addItem(Config::getInstance().getNickName(item) + "-" + item);
                 }
+
+                for (int i = 0; i < ui->serialBox->count(); ++i) {
+                    QString serial = ui->serialBox->itemText(i).trimmed();
+                    if (!serial.isEmpty()) {
+                        ui->serialBox->setCurrentIndex(i);
+                        on_startServerBtn_clicked();
+                    }
+                }
             } else if (args.contains("show") && args.contains("wlan0")) {
                 QString ip = m_adb.getDeviceIPFromStdOut();
                 if (ip.isEmpty()) {
@@ -184,7 +192,7 @@ void Dialog::initUI()
         connect(ui->deviceIpEdt->lineEdit(), &QWidget::customContextMenuRequested,
                 this, &Dialog::showIpEditMenu);
     }
-    
+
     // 为devicePortEdt添加右键菜单
     if (ui->devicePortEdt->lineEdit()) {
         ui->devicePortEdt->lineEdit()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -398,7 +406,7 @@ void Dialog::on_wirelessConnectBtn_clicked()
     if (!ip.isEmpty()) {
         saveIpHistory(ip);
     }
-    
+
     // 保存端口历史记录
     QString port = addr.split(":").last();
     if (!port.isEmpty() && port != ip) {
@@ -835,9 +843,9 @@ void Dialog::saveIpHistory(const QString &ip)
     if (ip.isEmpty()) {
         return;
     }
-    
+
     Config::getInstance().saveIpHistory(ip);
-    
+
     // 更新ComboBox
     loadIpHistory();
     ui->deviceIpEdt->setCurrentText(ip);
@@ -847,13 +855,13 @@ void Dialog::showIpEditMenu(const QPoint &pos)
 {
     QMenu *menu = ui->deviceIpEdt->lineEdit()->createStandardContextMenu();
     menu->addSeparator();
-    
+
     QAction *clearHistoryAction = new QAction(tr("Clear History"), menu);
     connect(clearHistoryAction, &QAction::triggered, this, [this]() {
         Config::getInstance().clearIpHistory();
         loadIpHistory();
     });
-    
+
     menu->addAction(clearHistoryAction);
     menu->exec(ui->deviceIpEdt->lineEdit()->mapToGlobal(pos));
     delete menu;
@@ -877,9 +885,9 @@ void Dialog::savePortHistory(const QString &port)
     if (port.isEmpty()) {
         return;
     }
-    
+
     Config::getInstance().savePortHistory(port);
-    
+
     // 更新ComboBox
     loadPortHistory();
     ui->devicePortEdt->setCurrentText(port);
@@ -889,13 +897,13 @@ void Dialog::showPortEditMenu(const QPoint &pos)
 {
     QMenu *menu = ui->devicePortEdt->lineEdit()->createStandardContextMenu();
     menu->addSeparator();
-    
+
     QAction *clearHistoryAction = new QAction(tr("Clear History"), menu);
     connect(clearHistoryAction, &QAction::triggered, this, [this]() {
         Config::getInstance().clearPortHistory();
         loadPortHistory();
     });
-    
+
     menu->addAction(clearHistoryAction);
     menu->exec(ui->devicePortEdt->lineEdit()->mapToGlobal(pos));
     delete menu;
