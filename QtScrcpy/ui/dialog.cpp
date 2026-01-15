@@ -5,6 +5,9 @@
 #include <QRandomGenerator>
 #include <QTime>
 #include <QTimer>
+#include <QScreen>
+#include <QGuiApplication>
+#include <QtMath>
 
 #include "config.h"
 #include "dialog.h"
@@ -538,9 +541,24 @@ void Dialog::onDeviceConnected(bool success, const QString &serial, const QStrin
     bool deviceVer = size.height() > size.width();
     QRect rc = Config::getInstance().getRect(serial);
     bool rcVer = rc.height() > rc.width();
-    // same width/height rate
-    if (rc.isValid() && (deviceVer == rcVer)) {
-        // mark: resize is for fix setGeometry magneticwidget bug
+    
+    if (!rc.isValid() || (deviceVer != rcVer)) {
+        QScreen *screen = QGuiApplication::primaryScreen();
+        if (screen) {
+            QRect screenRect = screen->availableGeometry();
+            int deviceCount = qsc::IDeviceManage::getInstance().getDeviceCount();
+            int cols = qCeil(qSqrt(deviceCount));
+            int rows = qCeil((double)deviceCount / cols);
+            int index = deviceCount - 1;
+            int col = index % cols;
+            int row = index / cols;
+            int w = videoForm->width();
+            int h = videoForm->height();
+            int x = screenRect.x() + col * (w + 20);
+            int y = screenRect.y() + row * (h + 20);
+            videoForm->move(x, y);
+        }
+    } else {
         videoForm->resize(rc.size());
         videoForm->setGeometry(rc);
     }
@@ -629,7 +647,7 @@ void Dialog::on_openAllDeviceBtn_clicked()
         if (!serial.isEmpty()) {
             ui->serialBox->setCurrentIndex(i);
             on_startServerBtn_clicked();
-            delayMs(500);
+            delayMs(2000);
         }
     }
 }
